@@ -2,11 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0f111a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <title>Re-Stocker</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
-  <meta name="theme-color" content="#0f111a">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,26 +25,27 @@
   <div id="toast-root"></div>
 
   <div class="container">
-    <div class="tabs">
+    <!-- Tabs will dock to bottom on phones -->
+    <nav class="tabs" aria-label="Navigation">
       <button class="tab active" data-tab="inventory">Inventory</button>
       <button class="tab" data-tab="shopping">Shopping</button>
-      <button class="tab" data-tab="add">Add / Edit</button>
+      <button class="tab" data-tab="add">Add</button>
       <button class="tab" data-tab="summary">Summary</button>
       <button class="tab" data-tab="settings">Settings</button>
-    </div>
+    </nav>
 
     <!-- INVENTORY -->
     <section id="inventory-view" class="view">
       <div class="quick-add card">
-        <input id="qName" placeholder="Add item (e.g., Coffee)">
-        <input id="qQty" type="number" step="0.01" placeholder="Qty">
-        <select id="qUnit">
+        <input id="qName" inputmode="text" autocomplete="off" placeholder="Add item (e.g., Coffee)">
+        <input id="qQty" type="number" step="0.01" inputmode="decimal" placeholder="Qty">
+        <select id="qUnit" aria-label="Unit">
           <option value="pcs">pcs</option>
           <option value="g">g</option>
           <option value="ml">ml</option>
           <option value="l">l</option>
         </select>
-        <div class="actions">
+        <div class="actions qa-actions">
           <button id="qScan" class="ghost" title="Scan barcode">Scan</button>
           <button id="qSave">Add</button>
         </div>
@@ -91,7 +96,7 @@
           </div>
           <div class="col">
             <label>Quantity (current stock)</label>
-            <input id="quantity" type="number" step="0.01" placeholder="e.g., 1000">
+            <input id="quantity" type="number" step="0.01" inputmode="decimal" placeholder="e.g., 1000">
           </div>
         </div>
 
@@ -121,14 +126,14 @@
             </div>
             <div class="col">
               <label>Threshold</label>
-              <input id="threshold" type="number" step="0.01" placeholder="e.g., 200">
+              <input id="threshold" type="number" step="0.01" inputmode="decimal" placeholder="e.g., 200">
             </div>
           </div>
 
           <div class="row">
             <div class="col">
               <label>Amount Paid (last)</label>
-              <input id="pricePaid" type="number" step="0.01" placeholder="e.g., 89.99">
+              <input id="pricePaid" type="number" step="0.01" inputmode="decimal" placeholder="e.g., 89.99">
             </div>
             <div class="col">
               <label>Purchase Time (last)</label>
@@ -153,13 +158,12 @@
           </div>
         </details>
 
-        <!-- Activity -->
         <div class="card" style="margin-top:12px">
           <h3 style="margin:0 0 8px">Activity</h3>
           <div class="row">
             <div class="col">
               <label>Amount</label>
-              <input id="actAmount" type="number" step="0.01" placeholder="e.g., 1">
+              <input id="actAmount" type="number" step="0.01" inputmode="decimal" placeholder="e.g., 1">
             </div>
             <div class="col">
               <label>&nbsp;</label>
@@ -170,44 +174,4 @@
             </div>
           </div>
           <div id="actLog" class="kv" style="margin-top:8px"></div>
-          <small class="muted">Logs update stock and keep a timestamp. Recent usage estimates days-left automatically.</small>
-        </div>
-
-        <div class="actions" style="margin-top:10px">
-          <button type="submit">Save</button>
-          <button type="reset" class="ghost">Reset</button>
-        </div>
-      </form>
-    </section>
-
-    <!-- SUMMARY -->
-    <section id="summary-view" class="view hidden">
-      <div class="card" id="summary-cards"></div>
-      <div class="card" id="summary-month" style="margin-top:12px"></div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="settings-view" class="view hidden">
-      <div class="card">
-        <h3>Automation</h3>
-        <label style="display:flex;gap:8px;align-items:center">
-          <input id="auto-rate" type="checkbox"> Use 30-day usage to estimate days-left & alerts
-        </label>
-        <hr>
-        <h3>Backup</h3>
-        <div class="actions compact">
-          <button id="export-json">Export JSON</button>
-          <input id="import-file" type="file" accept="application/json" hidden>
-          <button id="import-json" class="ghost">Import JSON</button>
-          <button id="load-seed" class="ghost">Load Starter Items</button>
-        </div>
-        <p class="muted">Imports merge by name. Starter set adds common pantry items.</p>
-      </div>
-    </section>
-
-    <footer><small class="muted">V2.2 — Reminders + Barcode Scan</small></footer>
-  </div>
-
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+          <small class="muted">Logs update stock with timestamp. Recent usage estimates days-left.
