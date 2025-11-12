@@ -1,5 +1,5 @@
 
-const CACHE = 'restocker-cache-v1';
+const CACHE = 'restocker-cache-v4';
 const ASSETS = [
   './',
   './index.html',
