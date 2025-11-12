@@ -1,8 +1,7 @@
 {
   "name": "Re-Stocker",
-  "short_name": "ReStocker",
+  "short_name": "Re-Stocker",
   "start_url": ".",
-  "scope": ".",
   "display": "standalone",
   "background_color": "#0f111a",
   "theme_color": "#0f111a",
