@@ -1,6 +1,5 @@
-// IndexedDB helpers (flat repo)
 const DB_NAME = 'restocker-db';
-const DB_VERSION = 2; // bump for V1.1 schema add-ons if any
+const DB_VERSION = 4; // V1.4: add pricePaid & purchaseTs fields (schemaless)
 const STORE = 'items';
 
 export function openDB(){
@@ -11,9 +10,8 @@ export function openDB(){
       if(!db.objectStoreNames.contains(STORE)){
         const store = db.createObjectStore(STORE, { keyPath:'id', autoIncrement:true });
         store.createIndex('name','name',{unique:false});
-      } else {
-        // future migrations if needed
       }
+      // No structural migration required (object store is schemaless).
     };
     req.onsuccess = ()=> resolve(req.result);
     req.onerror = ()=> reject(req.error);
@@ -60,27 +58,14 @@ export async function listItems(){
   });
 }
 
-/* V1.1 extras: bulk import/merge and wipe */
-export async function wipeAll(){
-  const db = await openDB();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction(STORE,'readwrite');
-    tx.objectStore(STORE).clear();
-    tx.oncomplete = ()=> resolve(true);
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-
 export async function upsertByName(items){
-  // merge by normalized name
   const existing = await listItems();
-  const map = new Map(existing.map(it => [normalizeName(it.name), it]));
+  const map = new Map(existing.map(it => [norm(it.name), it]));
   for(const raw of items){
     if(!raw || !raw.name) continue;
     const rec = sanitize(raw);
-    const key = normalizeName(rec.name);
+    const key = norm(rec.name);
     if(map.has(key)){
-      // update id with merged fields, prefer incoming values if present
       const current = map.get(key);
       const merged = { ...current, ...rec, id: current.id };
       await updateItem(merged);
@@ -98,8 +83,12 @@ function sanitize(it){
     quantity: Number(it.quantity||0),
     threshold: Number(it.threshold||0),
     dailyUse: Number(it.dailyUse||0),
+    store: (it.store||'').trim(),
     notes: (it.notes||'').trim(),
+    // NEW in V1.4
+    pricePaid: isNaN(Number(it.pricePaid)) ? null : Number(it.pricePaid),
+    purchaseTs: it.purchaseTs || null, // ISO string or null
     dateAdded: it.dateAdded || new Date().toISOString().slice(0,10)
   };
 }
-function normalizeName(n){ return String(n||'').trim().toLowerCase(); }
+const norm = n => String(n||'').trim().toLowerCase();
