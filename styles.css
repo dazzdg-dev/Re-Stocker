@@ -1,40 +1,129 @@
+/* Base theme */
 :root{
   --bg:#0f111a; --card:#141725; --ink:#eef1fa; --muted:#a7b0c3; --line:#262a3c;
-  --pad:14px; --radius:14px; --pill:#1b2033; --good:#76e0a6; --warn:#ff8ea1;
+  --pad:14px; --radius:16px; --pill:#1b2033; --good:#76e0a6; --warn:#ff8ea1;
+  --nav-h:64px; /* bottom nav height on phones */
 }
-*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Inter}
-header{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;padding:10px var(--pad);background:#0f111aee;border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+*{box-sizing:border-box}
+html,body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 system-ui,Segoe UI,Inter,Roboto,Arial;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+img{max-width:100%;display:block}
+
+/* Header */
+header{
+  position:sticky; top:0; z-index:5;
+  display:flex; gap:10px; align-items:center;
+  padding:10px var(--pad);
+  background:#0f111acc; backdrop-filter: blur(8px);
+  border-bottom:1px solid var(--line);
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+}
 .logo{border-radius:6px}
 h1{font-size:18px;margin:0}
-.container{max-width:840px;margin:0 auto;padding:14px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.tab{border:1px solid var(--line);background:#171c2c;border-radius:999px;padding:9px 12px}
+
+/* Layout container */
+.container{
+  max-width:840px; margin:0 auto; padding:12px var(--pad);
+  padding-bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Tabs: desktop top-row / phone bottom dock */
+.tabs{
+  display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;
+}
+.tab{
+  flex:0 0 auto;
+  border:1px solid var(--line); background:#171c2c;
+  border-radius:999px; padding:12px 14px; font-size:14px; min-height:44px;
+}
 .tab.active{outline:2px solid #25304d}
+
+/* On small screens, dock nav to bottom */
+@media (max-width: 480px){
+  .tabs{
+    position:fixed; left:0; right:0;
+    bottom: env(safe-area-inset-bottom, 0px);
+    z-index:6; gap:6px; justify-content:space-between;
+    background:linear-gradient(180deg, rgba(17,21,34,.0), rgba(17,21,34,.85));
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    margin:0; backdrop-filter: blur(8px);
+  }
+  .tab{
+    flex:1 1 auto; text-align:center; padding:12px 8px; border-radius:12px;
+  }
+}
+
+/* Cards & form controls */
 .view.hidden{display:none}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
-.row{display:flex;gap:12px;flex-wrap:wrap}
+.card{
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); padding:12px;
+}
+.row{display:flex; gap:12px; flex-wrap:wrap}
 .col{flex:1 1 220px}
-.align-end{display:flex;gap:8px;align-items:flex-end;justify-content:flex-end}
-label{display:block;margin:4px 0 6px;color:var(--muted);font-size:13px}
-input,select,button{padding:12px;border-radius:12px;border:1px solid var(--line);background:#0f1220;color:var(--ink);width:100%}
+.align-end{display:flex; gap:8px; align-items:flex-end; justify-content:flex-end}
+
+label{display:block; margin:4px 0 6px; color:var(--muted); font-size:13px}
+input,select,button{
+  width:100%; padding:14px 12px; border-radius:14px;
+  border:1px solid var(--line); background:#0f1220; color:var(--ink);
+  font-size:16px; /* prevent zoom, mobile friendly */
+  min-height:44px;
+}
 button{cursor:pointer}
 button.ghost{background:transparent}
-.badge{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--pill);font-size:12px}
-.toolbar{display:flex;gap:8px;margin:12px 0}
+.badge{padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--pill); font-size:12px}
+
+/* Toolbars */
+.toolbar{display:flex; gap:8px; margin:12px 0}
 .toolbar .grow{flex:1}
-.quick-add{display:grid;grid-template-columns:1fr 120px 110px 1fr;gap:8px;align-items:center}
-@media (max-width:560px){ .quick-add{grid-template-columns:1fr 1fr 1fr 1fr;}}
-.item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin:10px 0}
-.item .row-line{display:flex;justify-content:space-between;gap:10px}
-.btn-row{display:flex;gap:8px;margin-top:8px}
-.kv{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px}
-.actions{display:flex;gap:8px}
-.actions.compact button{padding:8px 10px}
+
+/* Quick Add layout */
+.quick-add{
+  display:grid; gap:8px; align-items:center;
+  grid-template-columns: 1fr 120px 110px 1fr;
+}
+.qa-actions{display:flex; gap:8px}
+@media (max-width: 560px){
+  .quick-add{
+    grid-template-columns: 1fr; /* stack neatly */
+  }
+  .qa-actions{justify-content:space-between}
+}
+
+/* Inventory item rows */
+.item{
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); padding:12px; margin:10px 0;
+}
+.item .row-line{display:flex; justify-content:space-between; gap:10px}
+.btn-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap}
+.kv{display:grid; grid-template-columns:1fr auto; gap:6px; font-size:14px}
+
+/* Actions & helpers */
+.actions{display:flex; gap:8px}
+.actions.compact button{padding:10px 12px}
 .muted{color:var(--muted)}
-footer{color:var(--muted);margin:16px 0;text-align:center}
-.switch{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+footer{color:var(--muted); margin:16px 0; text-align:center}
+
+/* Simple mode tweaks (optional class kept for future) */
+body.simple .adv summary{font-weight:600}
+
+/* Switch */
+.switch{margin-left:auto; display:flex; gap:8px; align-items:center; font-size:14px; color:var(--muted)}
 .switch input{width:auto}
-#toast-root{position:fixed;right:12px;bottom:12px;display:flex;flex-direction:column;gap:8px;z-index:99}
-.toast{display:flex;gap:8px;align-items:center;background:#151a2b;border:1px solid var(--line);padding:10px 12px;border-radius:12px;transition:.25s;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.dot{width:8px;height:8px;border-radius:999px;background:var(--good)}
+
+/* Toasts */
+#toast-root{position:fixed; right:12px; bottom: calc(var(--nav-h) + 12px + env(safe-area-inset-bottom, 0px)); display:flex; flex-direction:column; gap:8px; z-index:99}
+.toast{
+  display:flex; gap:8px; align-items:center;
+  background:#151a2b; border:1px solid var(--line);
+  padding:10px 12px; border-radius:12px; transition:.25s;
+  box-shadow:0 6px 20px rgba(0,0,0,.2)
+}
+.dot{width:8px; height:8px; border-radius:999px; background:var(--good)}
 .dot.warn{background:var(--warn)}
