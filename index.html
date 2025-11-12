@@ -1,73 +1,179 @@
-<!-- Add Item -->
-<section id="add-view" class="view hidden">
-  <form id="form" class="card">
-    <input type="hidden" id="itemId">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Re-Stocker PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <meta name="theme-color" content="#0f111a">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="icon-192.png" alt="" width="28" height="28" style="border-radius:6px">
+    <h1>Re-Stocker</h1>
+    <div style="margin-left:auto" class="actions">
+      <button class="ghost" id="notify">Enable Notifications</button>
+    </div>
+  </header>
 
-    <div class="row">
-      <div class="col">
-        <label>Name</label>
-        <input id="name" required placeholder="e.g., Ground Coffee 1kg">
-      </div>
-      <div class="col">
-        <label>Category</label>
-        <input id="category" placeholder="e.g., Groceries">
-      </div>
+  <!-- Toasts -->
+  <div id="toast-root"></div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-tab="inventory">Inventory</button>
+      <button class="tab" data-tab="add">Add Item</button>
+      <button class="tab" data-tab="shopping">Shopping List</button>
+      <button class="tab" data-tab="summary">Summary</button>
+      <button class="tab" data-tab="settings">Settings</button>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <label>Unit</label>
-        <select id="unit">
-          <option value="g">g</option>
-          <option value="ml">ml</option>
-          <option value="pcs">pcs</option>
-          <option value="l">l</option>
-        </select>
+    <!-- Inventory -->
+    <section id="inventory-view" class="view">
+      <div class="search">
+        <input id="search" placeholder="Search items by name…">
       </div>
-      <div class="col">
-        <label>Quantity</label>
-        <input id="quantity" type="number" step="0.01" placeholder="e.g., 1000">
+      <div class="actions" style="margin-bottom:12px">
+        <button id="export-csv" class="ghost">Export Inventory CSV</button>
       </div>
-    </div>
+      <div id="inventory-list" class="col"></div>
+    </section>
 
-    <div class="row">
-      <div class="col">
-        <label>Daily Use</label>
-        <input id="dailyUse" type="number" step="0.01" placeholder="e.g., 40">
-      </div>
-      <div class="col">
-        <label>Threshold</label>
-        <input id="threshold" type="number" step="0.01" placeholder="e.g., 200">
-      </div>
-    </div>
+    <!-- Add Item -->
+    <section id="add-view" class="view hidden">
+      <form id="form" class="card">
+        <input type="hidden" id="itemId">
 
-    <div class="row">
-      <div class="col">
-        <label>Store</label>
-        <input id="store" list="store-list" placeholder="e.g., Makro">
-        <datalist id="store-list"></datalist>
-      </div>
-      <div class="col">
-        <label>Amount Paid</label>
-        <input id="pricePaid" type="number" step="0.01" placeholder="e.g., 89.99">
-      </div>
-    </div>
+        <div class="row">
+          <div class="col">
+            <label>Name</label>
+            <input id="name" required placeholder="e.g., Ground Coffee 1kg">
+          </div>
+          <div class="col">
+            <label>Category</label>
+            <input id="category" placeholder="e.g., Groceries">
+          </div>
+        </div>
 
-    <div class="row">
-      <div class="col">
-        <label>Purchase Time</label>
-        <input id="purchaseTs" type="datetime-local">
-      </div>
-      <div class="col">
-        <label>Notes</label>
-        <input id="notes" placeholder="optional">
-      </div>
-    </div>
+        <div class="row">
+          <div class="col">
+            <label>Unit</label>
+            <select id="unit">
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+              <option value="pcs">pcs</option>
+              <option value="l">l</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Quantity</label>
+            <input id="quantity" type="number" step="0.01" placeholder="e.g., 1000">
+          </div>
+        </div>
 
-    <div style="height:10px"></div>
-    <div class="actions">
-      <button type="submit">Save Item</button>
-      <button type="reset" class="ghost">Reset</button>
-    </div>
-  </form>
-</section>
+        <div class="row">
+          <div class="col">
+            <label>Daily Use</label>
+            <input id="dailyUse" type="number" step="0.01" placeholder="e.g., 40">
+          </div>
+          <div class="col">
+            <label>Threshold</label>
+            <input id="threshold" type="number" step="0.01" placeholder="e.g., 200">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>Store</label>
+            <input id="store" list="store-list" placeholder="e.g., Makro">
+            <datalist id="store-list"></datalist>
+          </div>
+          <div class="col">
+            <label>Amount Paid</label>
+            <input id="pricePaid" type="number" step="0.01" placeholder="e.g., 89.99">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>Purchase Time</label>
+            <input id="purchaseTs" type="datetime-local">
+          </div>
+          <div class="col">
+            <label>Notes</label>
+            <input id="notes" placeholder="optional">
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="actions">
+          <button type="submit">Save Item</button>
+          <button type="reset" class="ghost">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Shopping -->
+    <section id="shopping-view" class="view hidden">
+      <div class="card" style="margin-bottom:12px">
+        <div class="row">
+          <div class="col">
+            <label>Filter by store</label>
+            <select id="store-filter">
+              <option value="__ALL__">All stores</option>
+            </select>
+          </div>
+          <div class="col" style="display:flex;align-items:flex-end;gap:8px">
+            <button id="clear-filter" class="ghost">Clear filter</button>
+            <span id="store-total" class="badge">Estimated basket: —</span>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="best-buys" style="margin-bottom:12px"></div>
+      <div class="actions" style="margin-bottom:12px">
+        <button id="export-md" class="ghost">Export Names (Markdown)</button>
+        <button id="export-basket-md">Export Basket (Markdown)</button>
+        <button id="export-basket-csv">Export Basket (CSV)</button>
+      </div>
+      <div id="shop-list"></div>
+    </section>
+
+    <!-- Summary -->
+    <section id="summary-view" class="view hidden">
+      <div class="card" id="summary-cards"></div>
+      <div style="height:12px"></div>
+      <div class="card" id="summary-store"></div>
+      <div style="height:12px"></div>
+      <div class="card" id="summary-ppu"></div>
+      <div style="height:12px"></div>
+      <div class="card" id="summary-month"></div>
+      <div style="height:12px"></div>
+      <div class="card" id="summary-beststore"></div>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings-view" class="view hidden">
+      <div class="card">
+        <h3>Backup & Restore</h3>
+        <div class="actions" style="margin-bottom:10px">
+          <button id="export-json">Export JSON</button>
+          <input id="import-file" type="file" accept="application/json" style="display:none">
+          <button id="import-json" class="ghost">Import JSON</button>
+        </div>
+        <small class="muted">Import merges by <em>name</em> (case-insensitive). Existing items with the same name are updated, new items are added.</small>
+        <hr>
+        <h3>About</h3>
+        <p>Re-Stocker is a lightweight PWA that tracks household supplies locally on your device using IndexedDB. Works offline; install to your home screen.</p>
+      </div>
+    </section>
+
+    <footer>
+      <small class="muted">V1.9 • Local-first • Offline-ready</small>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
