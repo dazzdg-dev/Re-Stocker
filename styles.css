@@ -22,8 +22,8 @@ button.ghost{background:transparent}
 .badge{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--pill);font-size:12px}
 .toolbar{display:flex;gap:8px;margin:12px 0}
 .toolbar .grow{flex:1}
-.quick-add{display:grid;grid-template-columns:1fr 120px 110px 100px;gap:8px}
-@media (max-width:560px){ .quick-add{grid-template-columns:1fr 1fr 1fr;}}
+.quick-add{display:grid;grid-template-columns:1fr 120px 110px 1fr;gap:8px;align-items:center}
+@media (max-width:560px){ .quick-add{grid-template-columns:1fr 1fr 1fr 1fr;}}
 .item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin:10px 0}
 .item .row-line{display:flex;justify-content:space-between;gap:10px}
 .btn-row{display:flex;gap:8px;margin-top:8px}
@@ -32,7 +32,6 @@ button.ghost{background:transparent}
 .actions.compact button{padding:8px 10px}
 .muted{color:var(--muted)}
 footer{color:var(--muted);margin:16px 0;text-align:center}
-/* toggle */
 .switch{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
 .switch input{width:auto}
 #toast-root{position:fixed;right:12px;bottom:12px;display:flex;flex-direction:column;gap:8px;z-index:99}
