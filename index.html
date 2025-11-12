@@ -174,4 +174,44 @@
             </div>
           </div>
           <div id="actLog" class="kv" style="margin-top:8px"></div>
-          <small class="muted">Logs update stock with timestamp. Recent usage estimates days-left.
+          <small class="muted">Logs update stock with timestamp. Recent usage estimates days-left.</small>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button type="submit">Save</button>
+          <button type="reset" class="ghost">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="summary-view" class="view hidden">
+      <div class="card" id="summary-cards"></div>
+      <div class="card" id="summary-month" style="margin-top:12px"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings-view" class="view hidden">
+      <div class="card">
+        <h3>Automation</h3>
+        <label class="row switch-row">
+          <input id="auto-rate" type="checkbox"> <span>Use 30-day usage to estimate days-left & alerts</span>
+        </label>
+        <hr>
+        <h3>Backup</h3>
+        <div class="actions compact">
+          <button id="export-json">Export JSON</button>
+          <input id="import-file" type="file" accept="application/json" hidden>
+          <button id="import-json" class="ghost">Import JSON</button>
+          <button id="load-seed" class="ghost">Load Starter Items</button>
+        </div>
+        <p class="muted">Imports merge by name. Starter set adds common pantry items.</p>
+      </div>
+    </section>
+
+    <footer><small class="muted">V2.3 — Mobile-friendly</small></footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
