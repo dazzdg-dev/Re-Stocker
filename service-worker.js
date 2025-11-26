@@ -1,16 +1,36 @@
-const CACHE = 'restocker-cache-v22';
+const CACHE = 'restocker-v4-turbo';
 const ASSETS = [
-  './','./index.html','./styles.css','./app.js','./db.js',
-  './manifest.json','./icon-192.png','./icon-512.png'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './db.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './splash.png'
 ];
-self.addEventListener('install', e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
-self.addEventListener('activate', e=>{
-  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      )
+    )
+  );
   self.clients.claim();
 });
-self.addEventListener('fetch', e=>{
-  e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request)));
+
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request))
+  );
 });
