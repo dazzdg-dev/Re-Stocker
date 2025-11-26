@@ -3,6 +3,65 @@ import { listItems, addItem, updateItem, deleteItem, upsertByName, logActivity }
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 
+const hasBarcodeDetector = 'BarcodeDetector' in window;
+
+async function startScan(targetInputId) {
+  if (!hasBarcodeDetector) {
+    alert('Barcode scanning is not supported in this browser.\nUse Chrome/Edge on Android over HTTPS.');
+    return;
+  }
+
+  try {
+    const detector = new BarcodeDetector({
+      formats: ['ean_13', 'ean_8', 'code_128', 'upc_e']
+    });
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' }
+    });
+
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true;
+    video.srcObject = stream;
+    video.className = 'scanner-video';
+    document.body.appendChild(video);
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let active = true;
+
+    async function tick() {
+      if (!active) return;
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const codes = await detector.detect(canvas);
+        if (codes.length) {
+          const value = codes[0].rawValue;
+          document.getElementById(targetInputId).value = value;
+          stop();
+          return;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function stop() {
+      active = false;
+      stream.getTracks().forEach(t => t.stop());
+      video.remove();
+    }
+
+    tick();
+  } catch (err) {
+    console.error(err);
+    alert('Could not access camera for scanning.');
+  }
+}
+
+
 const THEME_KEY = 'restocker:theme';
 const LAST_UNIT = 'restocker:last-unit';
 
