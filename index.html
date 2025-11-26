@@ -1,141 +1,229 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta 
-    name="viewport" 
-    content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
-  />
-  <meta name="theme-color" content="#050816" />
-  <meta name="mobile-web-app-capable" content="yes" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Re-Stocker V4.Turbo</title>
 
-  <!-- PWA stuff -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon-192.png" />
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
 
-  <!-- Main styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="styles.css">
 
-  <!-- Only the splash & tiny extras live inline -->
   <style>
-    #splash {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      display: grid;
-      place-items: center;
-      background: #050816;
-      transition: opacity .7s ease;
-    }
-    #splash img {
-      width: 70vw;
-      max-width: 420px;
-      border-radius: 22px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.7);
-      animation: splashZoom 1.2s ease forwards;
-    }
-    #splash.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
-    @keyframes splashZoom {
-      from { transform: scale(1); opacity: 1; }
-      to   { transform: scale(1.12); opacity: 1; }
+    /* --- Quick inline essentials for the UI --- */
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #030510;
+      color: #eaf2ff;
     }
 
-    /* Shopping badge – main styling in styles.css but keep fallback */
-    .tab-badge {
-      position: absolute;
-      top: -5px;
-      right: -6px;
-      background: #ff4f6b;
-      color: #fff;
-      font-size: 11px;
+    .theme-dark {
+      background: #030510;
+      color: #eaf2ff;
+    }
+    .theme-light {
+      background: #f4f7ff;
+      color: #111;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    #theme-toggle {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    /* --- Tabs --- */
+
+    nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px);
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      opacity: 1;
+      background: rgba(56,182,255,0.22);
+      color: #38b6ff;
+      font-weight: 600;
+    }
+
+    #shopping-badge {
+      background: #ff3b62;
+      color: white;
       padding: 2px 6px;
-      border-radius: 999px;
+      border-radius: 8px;
+      font-size: 11px;
+      margin-left: 4px;
       display: none;
     }
-    .tab-badge.show { display: inline-block; }
+    #shopping-badge.show {
+      display: inline-block;
+    }
+
+    /* --- Views --- */
+    .view {
+      padding: 16px;
+    }
+    .hidden {
+      display: none;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.35);
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card-row:last-child {
+      border-bottom: none;
+    }
+
+    .card-row.low strong {
+      color: #ff5d7a;
+    }
+
+    .meta {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .pill-btn {
+      background: #38b6ff;
+      border: none;
+      padding: 8px 12px;
+      color: #000;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .pill-small {
+      padding: 4px 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: inherit;
+      font-size: 15px;
+    }
+
+    .muted {
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    /* Toast */
+    #toast-root {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+    }
+    .toast {
+      background: #10182b;
+      border-left: 4px solid #38b6ff;
+      padding: 10px 14px;
+      margin-top: 8px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: flex;
+      gap: 8px;
+      transition: opacity 0.5s;
+    }
+    .toast.warn {
+      border-left-color: #ff3b62;
+    }
+
   </style>
 </head>
 
 <body class="theme-dark">
-  <!-- Splash overlay -->
-  <div id="splash" aria-hidden="true">
-    <!-- use your neon hex wallpaper saved as splash.png -->
-    <img src="splash.png" alt="Re-Stocker loading splash" />
-  </div>
 
-  <!-- Top bar -->
-  <header class="app-header">
-    <div class="app-title">
-      <img src="icon-192.png" class="logo" alt="Re-Stocker icon" />
-      <div>
-        <h1>Re-Stocker</h1>
-        <small>V4.Turbo · Neon Midnight</small>
-      </div>
-    </div>
-
-    <!-- Dark / light toggle controlled in app.js -->
-    <button id="theme-toggle" class="pill-btn" type="button">☾</button>
+  <header>
+    <h1>Re-Stocker V4.Turbo</h1>
+    <button id="theme-toggle">☾</button>
   </header>
 
-  <!-- Toast notifications -->
+  <!-- Toast container -->
   <div id="toast-root"></div>
 
-  <!-- Main shell -->
-  <main class="shell">
-    <!-- Navigation tabs -->
-    <nav class="tabs" aria-label="Main sections">
-      <button class="tab active" data-tab="inventory">Inventory</button>
+  <!-- Views -->
+  <div id="inventory-view" class="view"></div>
+  <div id="shopping-view" class="view hidden"></div>
+  <div id="add-view" class="view hidden"></div>
+  <div id="summary-view" class="view hidden"></div>
+  <div id="settings-view" class="view hidden"></div>
 
-      <button class="tab" data-tab="shopping">
-        Shopping
-        <span class="tab-badge" id="shopping-badge"></span>
-      </button>
+  <!-- Navigation tabs -->
+  <nav>
+    <div class="tab active" data-tab="inventory">Inventory</div>
+    <div class="tab" data-tab="shopping">Shopping <span id="shopping-badge"></span></div>
+    <div class="tab" data-tab="add">Add</div>
+    <div class="tab" data-tab="summary">Summary</div>
+    <div class="tab" data-tab="settings">Settings</div>
+  </nav>
 
-      <button class="tab" data-tab="add">Add</button>
-      <button class="tab" data-tab="summary">Summary</button>
-      <button class="tab" data-tab="settings">Settings</button>
-    </nav>
-
-    <!-- Views (content injected by app.js) -->
-    <section id="inventory-view" class="view">
-      <p class="muted">Loading inventory…</p>
-    </section>
-
-    <section id="shopping-view" class="view hidden">
-      <p class="muted">Loading shopping list…</p>
-    </section>
-
-    <section id="add-view" class="view hidden">
-      <p class="muted">Loading add form…</p>
-    </section>
-
-    <section id="summary-view" class="view hidden">
-      <p class="muted">Loading summary…</p>
-    </section>
-
-    <section id="settings-view" class="view hidden">
-      <p class="muted">Loading settings…</p>
-    </section>
-
-    <footer class="app-footer">
-      <small>Re-Stocker V4.Turbo · Hybrid · Offline-first</small>
-    </footer>
-  </main>
-
-  <!-- Main app logic -->
+  <!-- Load app logic -->
   <script type="module" src="app.js"></script>
 
-  <!-- Splash fade-out bootstrap -->
-  <script>
-    window.addEventListener('load', () => {
-      const splash = document.getElementById('splash');
-      setTimeout(() => splash.classList.add('hide'), 600);
-      setTimeout(() => splash.remove(), 1400);
-    });
-  </script>
 </body>
 </html>
